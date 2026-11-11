@@ -100,7 +100,7 @@ kubectl apply -f kubernetes/namespace.yaml
 kubectl -n shop-worker create configmap order-worker-script --from-file=worker.py=kubernetes/worker.py
 kubectl apply -f kubernetes/workload.yaml
 helm repo add grafana https://grafana.github.io/helm-charts && helm repo update
-helm install alloy grafana/alloy --version 1.4.0 -n alloy --create-namespace -f kubernetes/alloy-values.yaml
+helm install alloy grafana/alloy --version 1.5.2 -n alloy --create-namespace -f kubernetes/alloy-values.yaml
 ```
 
 **Start background shoppers** (so the graphs have data):
