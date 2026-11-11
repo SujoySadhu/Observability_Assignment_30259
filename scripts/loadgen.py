@@ -46,7 +46,7 @@ stats_lock = threading.Lock()
 accounts: list[tuple[str, str]] = []          # (email, password) created by this run
 accounts_lock = threading.Lock()
 QUIET = False
-TARGET = "http://localhost:8000"
+TARGET = "http://192.168.56.20:8000"
 THINK = 1.0
 
 
@@ -212,7 +212,7 @@ def virtual_user(vu: int, deadline):
 def main():
     global QUIET, TARGET, THINK
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--target", default=os.getenv("TARGET", "http://localhost:8000"))
+    p.add_argument("--target", default=os.getenv("TARGET", "http://192.168.56.20:8000"))
     p.add_argument("--users", type=int, default=int(os.getenv("USERS", "3")),
                    help="concurrent shoppers (each makes roughly 1 request/second)")
     p.add_argument("--think", type=float, default=float(os.getenv("THINK", "1.0")), help="average seconds between clicks")

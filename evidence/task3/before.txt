@@ -1,0 +1,1 @@
+http_requests_total{method="GET",route="/health",status="200"} 55.0

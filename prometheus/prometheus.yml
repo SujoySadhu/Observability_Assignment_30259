@@ -1,0 +1,23 @@
+# Prometheus scrape configuration (Task 4)
+global:
+  scrape_interval: 15s       # how often every target is scraped
+  evaluation_interval: 15s   # how often rules are evaluated
+
+scrape_configs:
+  # Job 1: the Ubuntu VM itself, via Node Exporter (host network)
+  - job_name: node
+    static_configs:
+      - targets: ["192.168.56.20:9100"]
+        labels:
+          host: obs-lab
+
+  # Job 2: the ShopLite API (Compose service discovery: "api" is a DNS name)
+  - job_name: shoplite-api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]
+
+  # Prometheus monitoring itself
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

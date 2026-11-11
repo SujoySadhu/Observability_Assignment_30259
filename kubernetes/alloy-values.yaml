@@ -1,0 +1,50 @@
+# Helm values for Grafana Alloy: collect MicroK8s pod logs and send them to Loki.
+
+controller:
+  type: deployment        # one Alloy pod is enough for a single-node cluster
+
+alloy:
+  configMap:
+    content: |
+      // 1. Find every pod in the cluster.
+      discovery.kubernetes "pods" {
+        role = "pod"
+      }
+
+      // 2. Turn Kubernetes info into simple log labels.
+      discovery.relabel "pods" {
+        targets = discovery.kubernetes.pods.targets
+
+        rule {
+          source_labels = ["__meta_kubernetes_namespace"]
+          target_label  = "namespace"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_name"]
+          target_label  = "pod"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_container_name"]
+          target_label  = "container"
+        }
+        rule {
+          source_labels = ["__meta_kubernetes_pod_label_app"]
+          target_label  = "app"
+        }
+      }
+
+      // 3. Read the logs of those pods through the Kubernetes API.
+      loki.source.kubernetes "pods" {
+        targets    = discovery.relabel.pods.output
+        forward_to = [loki.write.loki.receiver]
+      }
+
+      // 4. Send the logs to Loki (running in Docker Compose on the VM).
+      loki.write "loki" {
+        endpoint {
+          url = "http://192.168.56.20:3100/loki/api/v1/push"
+        }
+        external_labels = {
+          cluster = "microk8s-obs-lab",
+        }
+      }

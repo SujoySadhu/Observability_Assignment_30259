@@ -1,0 +1,9 @@
+NAME      STATUS   ROLES    AGE   VERSION
+obs-lab   Ready    <none>   9h    v1.35.6
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS      AGE
+alloy         alloy-676cd5c9b8-h6gzv                     2/2     Running   0             3h59m
+kube-system   calico-kube-controllers-676854dc5d-v6rms   1/1     Running   1             9h
+kube-system   calico-node-znz6d                          1/1     Running   1             9h
+kube-system   coredns-78894c95f4-ztft8                   1/1     Running   1             9h
+kube-system   hostpath-provisioner-7f665d64f6-7blch      1/1     Running   3 (58m ago)   9h
+shop-worker   order-worker-649f9d866c-4hvgf              1/1     Running   0             4h31m

@@ -1,0 +1,17 @@
+== Application
+PASS  ShopLite API answers /health
+PASS  ShopLite API exposes /metrics
+PASS  ShopLite web page loads
+== Metrics
+PASS  Prometheus target 'node' is UP
+PASS  Prometheus target 'shoplite-api' is UP
+== Kubernetes logs
+PASS  MicroK8s node is Ready
+PASS  order-worker pod is running
+PASS  Alloy pod is running
+PASS  Loki has logs from namespace shop-worker
+== Grafana
+PASS  Grafana is healthy
+PASS  Dashboard 'shoplite-overview' loaded
+PASS  Alert rule 'shoplite-api-down' loaded
+== Result: 12 passed, 0 failed

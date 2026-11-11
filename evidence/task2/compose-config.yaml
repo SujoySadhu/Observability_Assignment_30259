@@ -1,0 +1,213 @@
+name: obs
+networks:
+  default:
+    name: obs_default
+services:
+  api:
+    build:
+      context: /home/vagrant/30259_observability/app/backend
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: true
+    environment:
+      APP_VERSION: 2.0.0
+      DB_POOL_MAX: "10"
+      FLAWS: ${FLAWS-slow_queries,memory_leak,coupon_bug,slow_login}
+      LOG_LEVEL: INFO
+      PGDATABASE: ${POSTGRES_DB:-orders}
+      PGHOST: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      PGUSER: ${POSTGRES_USER:-orders}
+    mem_limit: 512m
+    networks:
+      default: null
+    ports:
+      - host_ip: 192.168.56.20
+        mode: ingress
+        protocol: tcp
+        published: "8000"
+        target: 8000
+    restart: unless-stopped
+  grafana:
+    depends_on:
+      loki:
+        condition: service_started
+        required: true
+      prometheus:
+        condition: service_started
+        required: true
+    environment:
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD
+        in .env}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - wget
+        - -qO-
+        - http://localhost:3000/api/health
+      timeout: 3s
+    image: grafana/grafana:12.1.0
+    networks:
+      default: null
+    ports:
+      - host_ip: 192.168.56.20
+        mode: ingress
+        protocol: tcp
+        published: "3000"
+        target: 3000
+    restart: unless-stopped
+    volumes:
+      - source: grafana-data
+        target: /var/lib/grafana
+        type: volume
+        volume: {}
+      - bind:
+          create_host_path: true
+        read_only: true
+        source: /home/vagrant/30259_observability/grafana/provisioning
+        target: /etc/grafana/provisioning
+        type: bind
+      - bind:
+          create_host_path: true
+        read_only: true
+        source: /home/vagrant/30259_observability/grafana/dashboards
+        target: /etc/grafana/dashboards
+        type: bind
+  loki:
+    command:
+      - -config.file=/etc/loki/config.yml
+    image: grafana/loki:3.5.3
+    networks:
+      default: null
+    ports:
+      - host_ip: 192.168.56.20
+        mode: ingress
+        protocol: tcp
+        published: "3100"
+        target: 3100
+    restart: unless-stopped
+    volumes:
+      - bind:
+          create_host_path: true
+        read_only: true
+        source: /home/vagrant/30259_observability/loki/config.yml
+        target: /etc/loki/config.yml
+        type: bind
+      - source: loki-data
+        target: /loki
+        type: volume
+        volume: {}
+  node-exporter:
+    command:
+      - --path.rootfs=/host
+      - --web.listen-address=192.168.56.20:9100
+    image: prom/node-exporter:v1.9.1
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - bind:
+          create_host_path: true
+          propagation: rslave
+        read_only: true
+        source: /
+        target: /host
+        type: bind
+  postgres:
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-orders}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_USER: ${POSTGRES_USER:-orders}
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test:
+        - CMD-SHELL
+        - pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+      timeout: 3s
+    image: postgres:17-alpine
+    networks:
+      default: null
+    restart: unless-stopped
+    volumes:
+      - source: pgdata
+        target: /var/lib/postgresql/data
+        type: volume
+        volume: {}
+      - bind:
+          create_host_path: true
+        read_only: true
+        source: /home/vagrant/30259_observability/app/db/init.sql
+        target: /docker-entrypoint-initdb.d/01-init.sql
+        type: bind
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - wget
+        - -qO-
+        - http://localhost:9090/-/ready
+      timeout: 3s
+    image: prom/prometheus:v3.5.0
+    networks:
+      default: null
+    ports:
+      - host_ip: 192.168.56.20
+        mode: ingress
+        protocol: tcp
+        published: "9090"
+        target: 9090
+    restart: unless-stopped
+    volumes:
+      - bind:
+          create_host_path: true
+        read_only: true
+        source: /home/vagrant/30259_observability/prometheus/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        type: bind
+      - source: prometheus-data
+        target: /prometheus
+        type: volume
+        volume: {}
+  web:
+    build:
+      context: /home/vagrant/30259_observability/app/frontend
+      dockerfile: Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+        required: true
+    networks:
+      default: null
+    ports:
+      - host_ip: 192.168.56.20
+        mode: ingress
+        protocol: tcp
+        published: "8080"
+        target: 80
+    restart: unless-stopped
+volumes:
+  grafana-data:
+    name: obs_grafana-data
+  loki-data:
+    name: obs_loki-data
+  pgdata:
+    name: obs_pgdata
+  prometheus-data:
+    name: obs_prometheus-data
+x-restart:
+  restart: unless-stopped

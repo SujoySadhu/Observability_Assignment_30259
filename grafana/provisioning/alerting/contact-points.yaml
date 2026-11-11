@@ -1,0 +1,10 @@
+apiVersion: 1
+contactPoints:
+  - orgId: 1
+    name: email-oncall
+    receivers:
+      - uid: email-oncall
+        type: email
+        settings:
+          addresses: ${ALERT_EMAIL_TO}     # filled in from .env, so no address in git
+          singleEmail: true

@@ -1,0 +1,8 @@
+NAME                  IMAGE                       COMMAND                  SERVICE         CREATED         STATUS                   PORTS
+obs-api-1             obs-api                     "uvicorn orderapi.ma…"   api             5 minutes ago   Up 5 minutes (healthy)   192.168.56.20:8000->8000/tcp
+obs-grafana-1         grafana/grafana:12.1.0      "/run.sh"                grafana         5 minutes ago   Up 5 minutes (healthy)   192.168.56.20:3000->3000/tcp
+obs-loki-1            grafana/loki:3.5.3          "/usr/bin/loki -conf…"   loki            5 minutes ago   Up 5 minutes             192.168.56.20:3100->3100/tcp
+obs-node-exporter-1   prom/node-exporter:v1.9.1   "/bin/node_exporter …"   node-exporter   5 minutes ago   Up 5 minutes             
+obs-postgres-1        postgres:17-alpine          "docker-entrypoint.s…"   postgres        5 minutes ago   Up 5 minutes (healthy)   5432/tcp
+obs-prometheus-1      prom/prometheus:v3.5.0      "/bin/prometheus --c…"   prometheus      5 minutes ago   Up 5 minutes (healthy)   192.168.56.20:9090->9090/tcp
+obs-web-1             obs-web                     "/docker-entrypoint.…"   web             5 minutes ago   Up 5 minutes (healthy)   192.168.56.20:8080->80/tcp

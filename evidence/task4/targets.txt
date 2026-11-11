@@ -1,0 +1,3 @@
+node	up	http://192.168.56.20:9100/metrics	last scrape: 2026-11-11T09:00:12.450958889Z
+prometheus	up	http://localhost:9090/metrics	last scrape: 2026-11-11T09:00:17.126169188Z
+shoplite-api	up	http://api:8000/metrics	last scrape: 2026-11-11T09:00:07.419554588Z

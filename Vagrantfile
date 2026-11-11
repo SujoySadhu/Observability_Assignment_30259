@@ -26,5 +26,8 @@ Vagrant.configure("2") do |config|
     vb.memory = 6144
     vb.cpus   = 4
     vb.gui    = false
+        # Clock fix: copy the time from Windows whenever the VM is >1s off (VirtualBox on Hyper-V drifts)
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", "1000"]
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-interval", "10000"]
   end
 end

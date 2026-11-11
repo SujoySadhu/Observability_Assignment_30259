@@ -6,10 +6,10 @@
 #   DUR=30 ./scripts/traffic-test.sh           # shorter phases
 set -euo pipefail
 
-API="${API:-http://localhost:8000}"
+API="${API:-http://192.168.56.20:8000}"
 DUR="${DUR:-60}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-EVIDENCE="$HERE/../evidence"
+EVIDENCE="$HERE/../evidence/task3"
 mkdir -p "$EVIDENCE"
 
 snapshot() {

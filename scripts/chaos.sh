@@ -10,7 +10,7 @@
 # Settings combine: "errors 30" then "latency 400" gives both.
 set -euo pipefail
 
-API="${API:-http://localhost:8000}"
+API="${API:-http://192.168.56.20:8000}"
 put() { curl -fsS -X PUT "$API/api/admin/chaos" -H 'Content-Type: application/json' -d "$1"; echo; }
 pct() { awk -v p="$1" 'BEGIN { printf "%.4f", p / 100 }'; }
 

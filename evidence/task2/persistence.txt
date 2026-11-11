@@ -1,0 +1,26 @@
+== 2026-11-11T14:19:54+06:00 BEFORE restart
+Grafana folder created: persistence-141954
+Prometheus oldest sample: 2026-11-11T06:26:04Z
+== docker compose down (containers removed, volumes kept)
+ Container obs-postgres-1 Removed 
+ Network obs_default Removing 
+ Network obs_default Removed 
+api: Up 36 seconds (healthy)
+grafana: Up 42 seconds (healthy)
+loki: Up 44 seconds
+node-exporter: Up 43 seconds
+postgres: Up 42 seconds (healthy)
+prometheus: Up 43 seconds (healthy)
+web: Up 29 seconds (health: starting)
+== 2026-11-11T14:20:44+06:00 AFTER restart
+Grafana folders:
+ShopLite
+persistence-141954
+persistence-test
+Prometheus oldest sample: 2026-11-11T06:26:04Z
+== Volumes
+DRIVER    VOLUME NAME
+local     obs_grafana-data
+local     obs_loki-data
+local     obs_pgdata
+local     obs_prometheus-data

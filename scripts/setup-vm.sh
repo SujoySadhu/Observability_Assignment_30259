@@ -24,5 +24,7 @@ sudo microk8s status --wait-ready
 sudo microk8s enable dns hostpath-storage
 sudo snap alias microk8s.kubectl kubectl
 sudo snap alias microk8s.helm helm
-
+echo "== Time: local timezone, VirtualBox Guest Additions keeps the clock in sync =="
+sudo timedatectl set-timezone Asia/Dhaka
+sudo timedatectl set-ntp false
 echo "Done. Log out and back in so the docker and microk8s groups take effect."

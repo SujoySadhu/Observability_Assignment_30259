@@ -1,0 +1,15 @@
+http_request_duration_seconds_count{method="GET",route="/health"} 76.0
+http_request_duration_seconds_count{method="POST",route="/api/auth/register"} 1.0
+http_request_duration_seconds_count{method="POST",route="/api/cart/items"} 2.0
+http_request_duration_seconds_count{method="POST",route="/api/orders"} 5.0
+http_requests_total{method="GET",route="/health",status="200"} 76.0
+http_requests_total{method="POST",route="/api/auth/register",status="201"} 1.0
+http_requests_total{method="POST",route="/api/cart/items",status="201"} 2.0
+http_requests_total{method="POST",route="/api/orders",status="201"} 1.0
+http_requests_total{method="POST",route="/api/orders",status="400"} 1.0
+http_requests_total{method="POST",route="/api/orders",status="401"} 1.0
+http_requests_total{method="POST",route="/api/orders",status="422"} 1.0
+http_requests_total{method="POST",route="/api/orders",status="500"} 1.0
+orders_created_total{payment_method="card"} 1.0
+orders_failed_total{reason="empty_cart"} 1.0
+orders_failed_total{reason="validation"} 1.0

@@ -1,7 +1,7 @@
 """Operator endpoints: fault injection and restocking.
 
 No fault injection here (so chaos can always be turned off) and no auth:
-acceptable only because the API port is bound to 127.0.0.1. In a real system
+acceptable only because the API port is bound to the private host-only IP 192.168.56.20. In a real system
 these would sit behind admin authentication or on a separate internal port.
 """
 import logging

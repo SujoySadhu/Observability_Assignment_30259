@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-worker
+  namespace: shop-worker
+  labels:
+    app: order-worker
+spec:
+  replicas: 1                      # one copy of the worker
+  selector:
+    matchLabels:
+      app: order-worker
+  template:
+    metadata:
+      labels:
+        app: order-worker
+    spec:
+      containers:
+        - name: worker
+          image: python:3.12-alpine          # small official Python image, no build needed
+          command: ["python", "-u", "/app/worker.py"]   # -u = print logs immediately
+          env:
+            - name: API_URL
+              value: "http://192.168.56.20:8000"
+            - name: INTERVAL_SECONDS
+              value: "5"
+            - name: ERROR_EVERY
+              value: "6"
+          volumeMounts:
+            - name: script
+              mountPath: /app
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits:   { cpu: 100m, memory: 64Mi }
+      volumes:
+        - name: script
+          configMap:
+            name: order-worker-script      # created from worker.py (step 1d)

@@ -1,0 +1,17 @@
+== 2026-11-11T15:07:38+06:00  PromQL results
+1. CPU %
+  {}  =>  33.155619273760436
+2. RAM %
+  {"host":"obs-lab","instance":"192.168.56.20:9100","job":"node"}  =>  26.830345496128416
+3. Requests/s
+  {}  =>  1.9983504286481484
+4. Error rate %
+  {}  =>  0.4524886877828054
+5. p95 latency s
+  {}  =>  1.3622641509433937
+Disk used %
+  {"device":"/dev/mapper/ubuntu--vg-ubuntu--lv","fstype":"ext4","host":"obs-lab","instance":"192.168.56.20:9100","job":"node","mountpoint":"/"}  =>  39.90910616586072
+Net in B/s
+  {}  =>  539.145628458144
+Uptime s
+  {"host":"obs-lab","instance":"192.168.56.20:9100","job":"node"}  =>  14957.338000059128

@@ -1,0 +1,5 @@
+               total        used        free      shared  buff/cache   available
+Mem:            5899        1717         219          60        4318        4181
+Swap:           2947           0        2947
+Filesystem                        1M-blocks  Used Available Use% Mounted on
+/dev/mapper/ubuntu--vg-ubuntu--lv     30538 11995     16968  42% /
