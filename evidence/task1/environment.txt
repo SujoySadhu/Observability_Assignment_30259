@@ -1,0 +1,60 @@
+== Date ==
+2026-11-11T05:39:45+00:00
+== OS ==
+PRETTY_NAME="Ubuntu 26.04.1 LTS"
+== Kernel ==
+7.0.0-22-generic
+== PID 1 ==
+systemd
+== Memory ==
+               total        used        free      shared  buff/cache   available
+Mem:           5.8Gi       1.1Gi       239Mi       1.4Mi       4.7Gi       4.6Gi
+Swap:          2.9Gi          0B       2.9Gi
+== CPUs ==
+4
+== Docker ==
+Client 29.9.3 / Server 29.9.3
+== Compose ==
+Docker Compose version v5.7.0
+== MicroK8s ==
+Name      Version  Rev   Tracking     Publisher    Notes
+microk8s  v1.35.6  9072  1.35/stable  canonical**  classic
+microk8s is running
+high-availability: no
+  datastore master nodes: 127.0.0.1:19001
+  datastore standby nodes: none
+== Nodes ==
+NAME      STATUS   ROLES    AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
+obs-lab   Ready    <none>   13m   v1.35.6   10.0.2.15     <none>        Ubuntu 26.04.1 LTS   7.0.0-22-generic   containerd://2.1.6
+== Helm ==
+v3.19.2+g8766e71
+== Structure ==
+.
+├── alerting
+├── app
+│   ├── backend
+│   ├── db
+│   └── frontend
+├── compose.yaml
+├── docs
+│   └── known-flaws.md
+├── .env.example
+├── evidence
+│   └── task1
+├── .gitattributes
+├── .gitignore
+├── grafana
+│   ├── dashboards
+│   └── provisioning
+├── kubernetes
+├── loki
+├── prometheus
+├── README.md
+├── scripts
+│   ├── chaos.sh
+│   ├── loadgen.py
+│   ├── setup-vm.sh
+│   └── traffic-test.sh
+└── Vagrantfile
+
+16 directories, 11 files

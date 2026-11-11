@@ -1,0 +1,63 @@
+# ShopLite application stack (the thing we will observe).
+# Prometheus, Grafana, Loki and Node Exporter get added to this file in later parts.
+#
+#   cp .env.example .env      # then edit the password
+#   docker compose up -d --build
+#   frontend : http://localhost:8080
+#   API      : http://localhost:8000   (/health, /ready, /metrics, /docs)
+
+name: obs
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-orders}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-orders}
+    volumes:
+      - pgdata:/var/lib/postgresql/data               # named volume: data survives restarts
+      - ./app/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      # -h 127.0.0.1 = check over TCP. During first-time init Postgres runs a temporary
+      # server on a Unix socket only; a socket check would report "healthy" too early.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    # No ports: only containers on this Compose network can reach the database.
+
+  api:
+    build: ./app/backend
+    environment:
+      # libpq reads these PG* variables directly; no password inside a URL.
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-orders}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      PGDATABASE: ${POSTGRES_DB:-orders}
+      APP_VERSION: "2.0.0"
+      LOG_LEVEL: INFO
+      DB_POOL_MAX: "10"
+      # Deliberate flaws for learning (see docs/known-flaws.md). Set FLAWS= (empty) to disable all.
+      FLAWS: ${FLAWS-slow_queries,memory_leak,coupon_bug,slow_login}
+    # A hard memory cap: the memory leak eventually hits it and the kernel OOM-kills the process.
+    mem_limit: 512m
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"   # bound to localhost only, never 0.0.0.0
+    restart: unless-stopped
+
+  web:
+    build: ./app/frontend
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

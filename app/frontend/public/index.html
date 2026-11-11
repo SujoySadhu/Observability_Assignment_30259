@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopLite | Tech gear, delivered fast</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap bar">
+      <a href="#/" class="logo">Shop<span>Lite</span></a>
+      <form id="search" class="search" role="search">
+        <input id="search-q" type="search" placeholder="Search laptops, phones, audio…" aria-label="Search products">
+        <button type="submit">Search</button>
+      </form>
+      <nav id="account" class="account"></nav>
+      <a href="#/cart" class="cart-link" aria-label="Cart">
+        <span class="cart-icon">🛒</span> Cart <span id="cart-count" class="count">0</span>
+      </a>
+    </div>
+    <nav id="cats" class="wrap cats"></nav>
+  </header>
+
+  <main id="view" class="wrap"></main>
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div><b>ShopLite</b><p>Tech gear, delivered fast across Bangladesh.</p></div>
+      <div><b>Shopping</b><p>Free shipping over $50<br>30-day returns<br>2-year warranty</p></div>
+      <div><b>Help</b><p>support@shoplite.test<br>Sat–Thu, 9am–9pm</p></div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
