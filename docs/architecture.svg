@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 900" width="1240" height="900" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <title>ShopLite observability architecture (candidate 30259)</title>
+  <style>
+    text{fill:#17202b}
+    .t{font-weight:600;font-size:14px}
+    .s{font-size:11.5px;fill:#5a6676}
+    .m{font-family:Consolas, Menlo, monospace;font-size:11px;fill:#5a6676}
+    .z{font-weight:700;font-size:13px;letter-spacing:.04em;fill:#5a6676}
+    .lbl{font-size:11px;font-weight:600}
+    .box{fill:#ffffff;stroke:#c9d0da;stroke-width:1.2}
+    .badge text{fill:#ffffff;font-size:11px;font-weight:700;text-anchor:middle}
+    .req{stroke:#2563c9;fill:none;stroke-width:2.2}
+    .met{stroke:#c26a00;fill:none;stroke-width:2.2}
+    .log{stroke:#1f8a55;fill:none;stroke-width:2.2}
+    .qry{stroke:#7a4bc4;fill:none;stroke-width:2.2}
+    .alr{stroke:#c8323a;fill:none;stroke-width:2.2}
+  </style>
+  <defs>
+    <marker id="a-req" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#2563c9"/></marker>
+    <marker id="a-met" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c26a00"/></marker>
+    <marker id="a-log" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#1f8a55"/></marker>
+    <marker id="a-qry" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#7a4bc4"/></marker>
+    <marker id="a-alr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#c8323a"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1240" height="900" fill="#f6f7f9"/>
+
+  <!-- Zones -->
+  <rect x="12" y="12" width="1216" height="836" rx="12" fill="none" stroke="#c9d0da" stroke-dasharray="6 5"/>
+  <text x="28" y="36" class="z">WINDOWS 11 HOST PC</text>
+  <rect x="248" y="50" width="970" height="788" rx="10" fill="#eef1f5" stroke="#c9d0da"/>
+  <text x="264" y="72" class="z">UBUNTU 26.04 VM · VAGRANT + VIRTUALBOX · HOST-ONLY 192.168.56.20 · 6 GB / 4 CPU</text>
+  <rect x="264" y="86" width="650" height="740" rx="8" fill="#f9fafb" stroke="#c9d0da"/>
+  <text x="278" y="106" class="z">DOCKER COMPOSE · PROJECT "obs"</text>
+  <rect x="928" y="86" width="276" height="740" rx="8" fill="#e8f0ee" stroke="#c9d0da"/>
+  <text x="942" y="106" class="z">MICROK8S CLUSTER</text>
+
+  <!-- Host column -->
+  <rect x="30" y="120" width="190" height="112" rx="8" class="box"/>
+  <text x="44" y="144" class="t">Your browser</text>
+  <text x="44" y="166" class="m">:8080  ShopLite shop</text>
+  <text x="44" y="183" class="m">:3000  Grafana</text>
+  <text x="44" y="200" class="m">:9090  Prometheus UI</text>
+  <text x="44" y="217" class="m">:8000  API (direct)</text>
+
+  <rect x="30" y="600" width="190" height="84" rx="8" class="box"/>
+  <text x="44" y="624" class="t">Gmail SMTP</text>
+  <text x="44" y="645" class="m">smtp.gmail.com:587</text>
+  <text x="44" y="662" class="s">STARTTLS + App Password</text>
+  <text x="44" y="677" class="s">(on the internet)</text>
+
+  <rect x="30" y="734" width="190" height="76" rx="8" class="box"/>
+  <text x="44" y="758" class="t">On-call inbox</text>
+  <text x="44" y="778" class="s">FIRING and RESOLVED</text>
+  <text x="44" y="794" class="s">emails (ALERT_EMAIL_TO)</text>
+
+  <!-- Application row -->
+  <rect x="284" y="130" width="180" height="92" rx="8" class="box"/>
+  <text x="298" y="154" class="t">web · nginx</text>
+  <text x="298" y="174" class="s">Static shop UI</text>
+  <text x="298" y="191" class="s">proxies /api/* → api</text>
+  <text x="298" y="210" class="m">:80 → host :8080</text>
+
+  <rect x="512" y="130" width="186" height="92" rx="8" class="box"/>
+  <text x="526" y="154" class="t">api · FastAPI</text>
+  <text x="526" y="174" class="s">orders, cart, auth</text>
+  <text x="526" y="191" class="s">exposes /metrics</text>
+  <text x="526" y="210" class="m">:8000 · mem 512m</text>
+
+  <rect x="738" y="130" width="160" height="92" rx="8" class="box"/>
+  <text x="752" y="154" class="t">postgres 17</text>
+  <text x="752" y="174" class="s">orders database</text>
+  <text x="752" y="191" class="s">no published port</text>
+  <text x="752" y="210" class="m">:5432 (internal)</text>
+
+  <!-- Monitoring row -->
+  <rect x="284" y="330" width="180" height="100" rx="8" class="box" stroke-dasharray="5 3"/>
+  <text x="298" y="354" class="t">node-exporter</text>
+  <text x="298" y="374" class="s">VM CPU, RAM, disk, net</text>
+  <text x="298" y="391" class="s">network_mode: host</text>
+  <text x="298" y="408" class="s">reads / , /proc read-only</text>
+  <text x="298" y="424" class="m">192.168.56.20:9100</text>
+
+  <rect x="512" y="330" width="186" height="100" rx="8" class="box"/>
+  <text x="526" y="354" class="t">Prometheus v3.5</text>
+  <text x="526" y="374" class="s">scrape every 15s</text>
+  <text x="526" y="391" class="s">TSDB, 7 day retention</text>
+  <text x="526" y="408" class="s">jobs: node, shoplite-api, self</text>
+  <text x="526" y="424" class="m">:9090</text>
+
+  <rect x="738" y="330" width="160" height="100" rx="8" class="box"/>
+  <text x="752" y="354" class="t">Loki 3.5</text>
+  <text x="752" y="374" class="s">log store</text>
+  <text x="752" y="391" class="s">labels: namespace,</text>
+  <text x="752" y="408" class="s">pod, container, app</text>
+  <text x="752" y="424" class="m">:3100</text>
+
+  <!-- Grafana -->
+  <rect x="420" y="540" width="478" height="150" rx="8" class="box" stroke-width="1.6"/>
+  <text x="436" y="566" class="t">Grafana 12.1  ·  :3000</text>
+  <text x="436" y="584" class="s">Everything below is provisioned from files at startup</text>
+  <rect x="436" y="598" width="140" height="78" rx="6" fill="#eef1f5" stroke="#c9d0da"/>
+  <text x="446" y="618" class="lbl">Data sources</text>
+  <text x="446" y="636" class="m">Prometheus (default)</text>
+  <text x="446" y="652" class="m">Loki</text>
+  <rect x="588" y="598" width="140" height="78" rx="6" fill="#eef1f5" stroke="#c9d0da"/>
+  <text x="598" y="618" class="lbl">Dashboard</text>
+  <text x="598" y="636" class="s">Host &amp; App Overview</text>
+  <text x="598" y="652" class="s">CPU · RAM · disk · net</text>
+  <text x="598" y="667" class="s">RPS · 5xx · p95 · orders</text>
+  <rect x="740" y="598" width="146" height="78" rx="6" fill="#eef1f5" stroke="#c9d0da"/>
+  <text x="750" y="618" class="lbl">Alert rule</text>
+  <text x="750" y="636" class="m" style="font-size:10px">up{job="shoplite-api"}</text>
+  <text x="750" y="652" class="s">&lt; 1 · every 30s, for 1m</text>
+  <text x="750" y="667" class="s">→ contact email-oncall</text>
+
+  <!-- Volumes -->
+  <rect x="284" y="730" width="614" height="80" rx="8" fill="none" stroke="#c9d0da" stroke-dasharray="4 4"/>
+  <text x="298" y="752" class="lbl">Named volumes · data survives docker compose down and VM reboots</text>
+  <text x="298" y="776" class="m">pgdata → postgres     prometheus-data → prometheus</text>
+  <text x="298" y="794" class="m">loki-data → loki      grafana-data → grafana</text>
+
+  <!-- MicroK8s -->
+  <rect x="944" y="130" width="244" height="112" rx="8" class="box"/>
+  <text x="958" y="154" class="t">order-worker pod</text>
+  <text x="958" y="172" class="m">ns: shop-worker · python:3.12</text>
+  <text x="958" y="191" class="s">calls the API every 5s</text>
+  <text x="958" y="208" class="s">every 6th call: /api/products/999999</text>
+  <text x="958" y="226" class="s">INFO → stdout · ERROR → stderr</text>
+
+  <rect x="944" y="300" width="244" height="80" rx="8" class="box"/>
+  <text x="958" y="324" class="t">kubelet + container runtime</text>
+  <text x="958" y="344" class="s">keeps each pod's stdout/stderr</text>
+  <text x="958" y="361" class="s">served through the Kubernetes API</text>
+
+  <rect x="944" y="440" width="244" height="112" rx="8" class="box"/>
+  <text x="958" y="464" class="t">Grafana Alloy (Helm, ns: alloy)</text>
+  <text x="958" y="482" class="s">1. discover every pod</text>
+  <text x="958" y="499" class="s">2. relabel ns / pod / container / app</text>
+  <text x="958" y="516" class="s">3. tail logs via K8s API</text>
+  <text x="958" y="533" class="s">4. push to Loki, cluster=microk8s-obs-lab</text>
+
+  <!-- Flows -->
+  <path d="M220,176 H284" class="req" marker-end="url(#a-req)"/>
+  <path d="M464,176 H512" class="req" marker-end="url(#a-req)"/>
+  <text x="469" y="168" class="lbl" fill="#2563c9" style="fill:#2563c9">/api/*</text>
+  <path d="M698,176 H738" class="req" marker-end="url(#a-req)"/>
+  <text x="704" y="168" class="lbl" style="fill:#2563c9">SQL</text>
+  <path d="M944,160 H920 V118 H640 V130" class="req" stroke-dasharray="7 4" marker-end="url(#a-req)"/>
+  <text x="700" y="113" class="lbl" style="fill:#2563c9">HTTP 192.168.56.20:8000</text>
+
+  <path d="M590,222 V330" class="met" marker-end="url(#a-met)"/>
+  <text x="598" y="270" class="lbl" style="fill:#c26a00">GET /metrics</text>
+  <text x="598" y="285" class="m">http_requests_total,</text>
+  <text x="598" y="299" class="m">request_duration, orders_*</text>
+  <path d="M464,380 H512" class="met" marker-end="url(#a-met)"/>
+  <text x="470" y="372" class="lbl" style="fill:#c26a00">node_*</text>
+
+  <path d="M1066,242 V300" class="log" marker-end="url(#a-log)"/>
+  <text x="1074" y="276" class="lbl" style="fill:#1f8a55">stdout / stderr</text>
+  <path d="M1066,380 V440" class="log" marker-end="url(#a-log)"/>
+  <text x="1074" y="414" class="lbl" style="fill:#1f8a55">read pod logs</text>
+  <path d="M944,496 H920 V400 H898" class="log" marker-end="url(#a-log)"/>
+  <text x="808" y="470" class="lbl" style="fill:#1f8a55">push /loki/api/v1/push</text>
+
+  <path d="M605,430 V540" class="qry" marker-end="url(#a-qry)"/>
+  <text x="613" y="490" class="lbl" style="fill:#7a4bc4">PromQL</text>
+  <path d="M818,430 V540" class="qry" marker-end="url(#a-qry)"/>
+  <text x="826" y="490" class="lbl" style="fill:#7a4bc4">LogQL</text>
+
+  <path d="M125,232 V560 H420" class="req" marker-end="url(#a-req)"/>
+  <text x="236" y="552" class="lbl" style="fill:#2563c9">view dashboards :3000</text>
+
+  <path d="M813,690 V712 H240 V642 H220" class="alr" marker-end="url(#a-alr)"/>
+  <text x="400" y="706" class="lbl" style="fill:#c8323a">email via SMTP (GF_SMTP_*)</text>
+  <path d="M125,684 V734" class="alr" marker-end="url(#a-alr)"/>
+
+  <!-- Badges -->
+  <g class="badge"><circle cx="252" cy="176" r="10" fill="#2563c9"/><text x="252" y="180">1</text></g>
+  <g class="badge"><circle cx="920" cy="140" r="10" fill="#2563c9"/><text x="920" y="144">2</text></g>
+  <g class="badge"><circle cx="590" cy="250" r="10" fill="#c26a00"/><text x="590" y="254">3</text></g>
+  <g class="badge"><circle cx="1066" cy="268" r="10" fill="#1f8a55"/><text x="1066" y="272">4</text></g>
+  <g class="badge"><circle cx="605" cy="470" r="10" fill="#7a4bc4"/><text x="605" y="474">5</text></g>
+  <g class="badge"><circle cx="300" cy="712" r="10" fill="#c8323a"/><text x="300" y="716">6</text></g>
+  <g class="badge"><circle cx="125" cy="420" r="10" fill="#2563c9"/><text x="125" y="424">7</text></g>
+
+  <!-- Legend -->
+  <g font-size="12">
+    <line x1="30" y1="876" x2="56" y2="876" class="req"/><text x="62" y="880" class="s">HTTP traffic</text>
+    <line x1="160" y1="876" x2="186" y2="876" class="met"/><text x="192" y="880" class="s">Metrics (pulled by Prometheus)</text>
+    <line x1="380" y1="876" x2="406" y2="876" class="log"/><text x="412" y="880" class="s">Logs (pushed to Loki)</text>
+    <line x1="550" y1="876" x2="576" y2="876" class="qry"/><text x="582" y="880" class="s">Grafana queries</text>
+    <line x1="690" y1="876" x2="716" y2="876" class="alr"/><text x="722" y="880" class="s">Alert email</text>
+    <text x="820" y="880" class="s">Arrows show which way data travels · numbers match the README steps</text>
+  </g>
+</svg>

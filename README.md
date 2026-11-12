@@ -2,6 +2,10 @@
 
 **Candidate:** Sujoy Sadhu · **Candidate ID:** 30259 · **Instructor:** Lipton Ahammed · **Submission:** 12 Nov 2026
 
+![ShopLite observability architecture: Windows host, Ubuntu VM with Docker Compose and MicroK8s, and the traffic, metrics, logs and alert flows](docs/architecture.png)
+
+*How the pieces connect. The numbered flows are explained in [section 3](#3-the-big-picture).*
+
 This project watches a small online shop and the Ubuntu machine it runs on. It collects
 **numbers** (how busy is the CPU? how many orders per minute?), **log messages** (what went
 wrong and when?) and sends an **email** when something breaks. Everything runs on one laptop,
@@ -86,6 +90,22 @@ This project builds all three, end to end, with real data:
 ---
 
 ## 3. The big picture
+
+How to read the architecture diagram at the top of this page: each colour is one kind of data, and arrows point the way the data travels.
+
+| # | Flow | What happens |
+|---|---|---|
+| 1 | **Shop traffic** (blue) | Browser → nginx `:8080` → `/api/*` proxied to FastAPI `:8000` → PostgreSQL (no published port) |
+| 2 | **Worker traffic** (blue, dashed) | The order-worker pod in MicroK8s calls the API at `192.168.56.20:8000` every 5 s. Every 6th call asks for a missing product → 404 |
+| 3 | **Metrics** (orange) | Prometheus *pulls* `api:8000/metrics` and Node Exporter `:9100` every 15 s and stores them for 7 days |
+| 4 | **Logs** (green) | The pod writes INFO to stdout and ERROR to stderr → the kubelet keeps them → Alloy reads them via the Kubernetes API, adds labels and *pushes* them to Loki `:3100` |
+| 5 | **Queries** (purple) | Grafana asks Prometheus (PromQL) and Loki (LogQL) for the dashboard panels |
+| 6 | **Alert** (red) | Every 30 s Grafana checks `up{job="shoplite-api"} < 1`. Down for 1 min → email through Gmail SMTP `:587`. A RESOLVED email follows on recovery |
+| 7 | **You** | open Grafana `:3000` from the Windows browser |
+
+An interactive version with a port table is in `docs/architecture-flow.html` (open it in a browser).
+
+Text version:
 
 ```
 Windows 11 laptop
@@ -329,7 +349,11 @@ It is stored as a file (`grafana/dashboards/shoplite-overview.json`) and loaded 
 │   ├── traffic-test.sh          normal → high → failing traffic, saves before/after numbers
 │   ├── loadgen.py               simulated shoppers
 │   └── chaos.sh                 turns error/latency injection on and off
-├── docs/known-flaws.md          the 4 deliberate shop bugs
+├── docs/
+│   ├── architecture.png         the architecture diagram at the top of this README
+│   ├── architecture.svg         a simpler vector version of the same diagram
+│   ├── architecture-flow.html   the same diagram with step-by-step notes and a port table
+│   └── known-flaws.md           the 4 deliberate shop bugs
 └── evidence/                    screenshots and command output for each task
 ```
 
